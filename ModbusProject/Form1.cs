@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using EasyModbus;
 using EasyModbus.Exceptions;
 using System.IO;
+using Newtonsoft.Json;
+
 
 
 namespace ModbusProject
@@ -83,7 +85,6 @@ namespace ModbusProject
                 lblBaglantıDurumu.Text = "Connection Open";
                 tmrModbusTcpIP.Enabled = true;
 
-
             }
             catch (Exception ex)
             {
@@ -95,8 +96,6 @@ namespace ModbusProject
         private void tmrModbusTcpIP_Tick_1(object sender, EventArgs e)
         {
             tmrModbusTcpIP.Enabled = false;
-
-
             try
             {
 
@@ -114,7 +113,6 @@ namespace ModbusProject
 
                         register[i].Text = readHoldingRegisters[i].ToString();
 
-
                     }
                 }
 
@@ -124,20 +122,15 @@ namespace ModbusProject
                     modbusClient.UnitIdentifier = (byte)Convert.ToInt16(txtSlaveId.Text);
                     bool[] readCoils = modbusClient.ReadCoils(startingAddress: Convert.ToInt32(txtAdress.Text), quantity: Convert.ToInt32(txtquantity.Text));
 
-
-
-
                     for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
                     {
 
                         register2[i].Text = (Convert.ToInt16(txtAdress.Text) + (i)).ToString();
                         register[i].Text = readCoils[i].ToString();
 
-
                     }
 
                 }
-
 
                 else if (cboState.Text == "04 Input Register(3x)")
                 {
@@ -155,7 +148,6 @@ namespace ModbusProject
                     }
 
                 }
-
 
                 else if (cboState.Text == "02 Input Status(1x)")
                 {
@@ -184,7 +176,6 @@ namespace ModbusProject
                 txtMesaj.Text = ex.Message;
 
             }
-
 
 
             tmrModbusTcpIP.Enabled = true;
@@ -218,8 +209,6 @@ namespace ModbusProject
             }
         }
     
-
-
         private void txtAdress_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (char.IsDigit(e.KeyChar) == false)
@@ -240,24 +229,28 @@ namespace ModbusProject
 
         }
 
-     
-
-      
-      
-
-   
-
         private void txtSave_Click_1(object sender, EventArgs e)
         {
             try
             {
                 saveFileDialog1.FileName = "*";
-                saveFileDialog1.Filter = "YazıDosyaları(*txt)|*.text)";
-                saveFileDialog1.DefaultExt = "txt";
+                saveFileDialog1.Filter = "YazıDosyaları(*json)|*.json)";
+                saveFileDialog1.DefaultExt = "json";
                 saveFileDialog1.ShowDialog();
                 StreamWriter writer = new StreamWriter(saveFileDialog1.FileName);
-
-                writer.WriteLine("IP" + txtServerIPAdress);
+                writer.WriteLine("Json:");
+                writer.WriteLine("IP : " + JsonConvert.SerializeObject((txtServerIPAdress.Text)));
+                writer.WriteLine("Port : " + JsonConvert.SerializeObject((txtPort.Text)));
+                writer.WriteLine("SlaveId : " + JsonConvert.SerializeObject((txtSlaveId.Text)));
+                writer.WriteLine("Function : " + JsonConvert.SerializeObject((cboState.Text)));
+                writer.WriteLine("Adress : " + JsonConvert.SerializeObject((txtAdress.Text)));
+                writer.WriteLine("Quantity : " + JsonConvert.SerializeObject((txtquantity.Text)));
+               
+                //writer.WriteLine("Port: " + txtPort.Text);
+                //writer.WriteLine("SlaveId: " + txtSlaveId.Text);
+                //writer.WriteLine("Function: " + cboState.Text);
+                //writer.WriteLine("Adress: " + txtAdress.Text);
+                //writer.WriteLine("Quantity: " + txtquantity.Text);
                 writer.Close();
             }
             catch (Exception)
