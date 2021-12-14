@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyModbus;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,35 +8,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using EasyModbus;
 using EasyModbus.Exceptions;
-using System.IO;
-using Newtonsoft.Json;
-
-
 
 namespace ModbusProject
 {
-    public partial class txtForms : Form
+    public partial class txtForms2 : Form
     {
         ModbusClient modbusClient;
 
         private TextBox[] register;
         private TextBox[] register2;
         private TextBox[] register3;
-        public txtForms()
+        public txtForms2()
         {
             InitializeComponent();
         }
-
-        private void txtForms_Load(object sender, EventArgs e)
+        private void txtForms2_Load(object sender, EventArgs e)
         {
             cboState.Text = "03 Read Holding Register(4x)";
+        }
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void btnBaglantıAc_Click(object sender, EventArgs e)
         {
-
             try
             {
                 txtSlaveId.ReadOnly = true;
@@ -51,6 +54,8 @@ namespace ModbusProject
 
                 for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
                 {
+
+
                     register2[i] = new TextBox();
                     register2[i].Location = new Point(0, i * 20);
                     register2[i].Size = new Size(40, 22);
@@ -60,17 +65,17 @@ namespace ModbusProject
                     register3[i].Location = new Point(40, (i) * 20);
                     register3[i].Size = new Size(80, 45);
                     panel1.Controls.Add(register3[i]);
-                   
+
 
                     register[i] = new TextBox();
                     register[i].Location = new Point(120, (i) * 20);
                     register[i].Size = new Size(100, 45);
                     panel1.Controls.Add(register[i]);
-      
+
 
                 }
                 lblBaglantıDurumu.Text = "Connection Open";
-                tmrModbusTcpIP.Enabled = true;
+                tmrModbus2.Enabled = true;
 
             }
             catch (Exception ex)
@@ -78,11 +83,11 @@ namespace ModbusProject
 
                 lblBaglantıDurumu.Text = ex.Message;
             }
-
         }
-        private void tmrModbusTcpIP_Tick_1(object sender, EventArgs e)
+
+        private void tmrModbus2_Tick(object sender, EventArgs e)
         {
-            tmrModbusTcpIP.Enabled = false;
+            tmrModbus2.Enabled = false;
             try
             {
 
@@ -149,9 +154,32 @@ namespace ModbusProject
                 txtMesaj.Text = ex.Message;
 
             }
-            tmrModbusTcpIP.Enabled = true;
+            tmrModbus2.Enabled = true;
         }
-       
+        private void btnBaglantıKapat_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                modbusClient.Disconnect();
+                lblBaglantıDurumu.Text = "Disconnection ";
+                tmrModbus2.Enabled = false;
+                txtSlaveId.ReadOnly = false;
+                txtAdress.ReadOnly = false;
+                txtPort.ReadOnly = false;
+                txtServerIPAdress.ReadOnly = false;
+                txtquantity.ReadOnly = false;
+                for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
+                {
+                   panel1.Controls.Remove(register2[i]);
+                   panel1. Controls.Remove(register3[i]);
+                    panel1.Controls.Remove(register[i]);
+                }
+            }
+            catch (Exception ex)
+            {
+                lblBaglantıDurumu.Text = ex.Message;
+            }
+        }
         private void txtAdress_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (char.IsDigit(e.KeyChar) == false)
@@ -168,120 +196,7 @@ namespace ModbusProject
                 MessageBox.Show("Buraya Sadece Sayı giriniz");
             }
         }
-      
 
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            txtForms2 to = new txtForms2();
-            to.Show();
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                saveFileDialog1.FileName = "*";
-                saveFileDialog1.Filter = "YazıDosyaları(*json)|*.json)";
-                saveFileDialog1.DefaultExt = "json";
-                saveFileDialog1.ShowDialog();
-                StreamWriter writer = new StreamWriter(saveFileDialog1.FileName);
-                ModbusSetup setup = new ModbusSetup();
-                setup.ServerIP = txtServerIPAdress.Text;
-                setup.Port = Convert.ToInt32(txtPort.Text);
-                setup.SlaveId = Convert.ToInt32(txtSlaveId.Text);
-                setup.Function = cboState.Text;
-                setup.Address = Convert.ToInt32(txtAdress.Text);
-                setup.Quantity = Convert.ToInt32(txtquantity.Text);
-                writer.WriteLine(JsonConvert.SerializeObject(setup));
-
-                writer.Close();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Kaydetme işlemi başarısız");
-            }
-
-
-        }
-        private void txtSlaveId_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void saveASToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                saveFileDialog1.FileName = "*";
-                saveFileDialog1.Filter = "YazıDosyaları(*json)|*.json)";
-                saveFileDialog1.DefaultExt = "json";
-                saveFileDialog1.ShowDialog();
-                StreamWriter writer = new StreamWriter(saveFileDialog1.FileName);
-                ModbusSetup setup = new ModbusSetup();
-                setup.ServerIP = txtServerIPAdress.Text;
-                setup.Port = Convert.ToInt32(txtPort.Text);
-                setup.SlaveId = Convert.ToInt32(txtSlaveId.Text);
-                setup.Function = cboState.Text;
-                setup.Address = Convert.ToInt32(txtAdress.Text);
-                setup.Quantity = Convert.ToInt32(txtquantity.Text);
-                writer.WriteLine(JsonConvert.SerializeObject(setup));
-
-                writer.Close();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Kaydetme işlemi başarısız");
-            }
-
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-        private void btnBaglantıKapat_Click_1(object sender, EventArgs e)
-        {
-            try
-            {
-                modbusClient.Disconnect();
-                lblBaglantıDurumu.Text = "Disconnection ";
-                tmrModbusTcpIP.Enabled = false;
-                txtSlaveId.ReadOnly = false;
-                txtAdress.ReadOnly = false;
-                txtPort.ReadOnly = false;
-                txtServerIPAdress.ReadOnly = false;
-                txtquantity.ReadOnly = false;
-                for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
-                {
-                    panel1.Controls.Remove(register[i]);
-                    panel1.Controls.Remove(register2[i]);
-                    panel1.Controls.Remove(register3[i]);
-                }
-            }
-            catch (Exception ex)
-            {
-                lblBaglantıDurumu.Text = ex.Message;
-            }
-        }
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Stream st;
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                if ((st = openFileDialog.OpenFile()) != null)
-                {
-                    string file = openFileDialog.FileName;
-                    string str = File.ReadAllText(file);
-                    openfolder.Text = str;
-                }              
-            }
-        }
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
         
-        }
     }
-    }
-
+}

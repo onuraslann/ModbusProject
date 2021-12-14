@@ -30,13 +30,13 @@ namespace ModbusProject
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(txtForms));
             this.label1 = new System.Windows.Forms.Label();
             this.txtServerIPAdress = new System.Windows.Forms.TextBox();
             this.label111 = new System.Windows.Forms.Label();
             this.txtPort = new System.Windows.Forms.TextBox();
             this.btnBaglantıAc = new System.Windows.Forms.Button();
             this.btnBaglantıKapat = new System.Windows.Forms.Button();
-            this.txtSave = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.txtMesaj = new System.Windows.Forms.Label();
             this.lblBaglantıDurumu = new System.Windows.Forms.Label();
@@ -54,17 +54,18 @@ namespace ModbusProject
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openfolder = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveASToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 87);
+            this.label1.Location = new System.Drawing.Point(12, 47);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(120, 17);
             this.label1.TabIndex = 1;
@@ -72,7 +73,7 @@ namespace ModbusProject
             // 
             // txtServerIPAdress
             // 
-            this.txtServerIPAdress.Location = new System.Drawing.Point(138, 82);
+            this.txtServerIPAdress.Location = new System.Drawing.Point(138, 47);
             this.txtServerIPAdress.Name = "txtServerIPAdress";
             this.txtServerIPAdress.Size = new System.Drawing.Size(177, 22);
             this.txtServerIPAdress.TabIndex = 64;
@@ -81,7 +82,7 @@ namespace ModbusProject
             // label111
             // 
             this.label111.AutoSize = true;
-            this.label111.Location = new System.Drawing.Point(12, 138);
+            this.label111.Location = new System.Drawing.Point(12, 90);
             this.label111.Name = "label111";
             this.label111.Size = new System.Drawing.Size(46, 17);
             this.label111.TabIndex = 65;
@@ -89,16 +90,16 @@ namespace ModbusProject
             // 
             // txtPort
             // 
-            this.txtPort.Location = new System.Drawing.Point(145, 133);
+            this.txtPort.Location = new System.Drawing.Point(138, 90);
             this.txtPort.Name = "txtPort";
-            this.txtPort.Size = new System.Drawing.Size(170, 22);
+            this.txtPort.Size = new System.Drawing.Size(177, 22);
             this.txtPort.TabIndex = 66;
             this.txtPort.Text = "502";
             // 
             // btnBaglantıAc
             // 
             this.btnBaglantıAc.BackColor = System.Drawing.Color.ForestGreen;
-            this.btnBaglantıAc.Location = new System.Drawing.Point(138, 173);
+            this.btnBaglantıAc.Location = new System.Drawing.Point(138, 129);
             this.btnBaglantıAc.Name = "btnBaglantıAc";
             this.btnBaglantıAc.Size = new System.Drawing.Size(187, 36);
             this.btnBaglantıAc.TabIndex = 67;
@@ -109,23 +110,13 @@ namespace ModbusProject
             // btnBaglantıKapat
             // 
             this.btnBaglantıKapat.BackColor = System.Drawing.Color.Yellow;
-            this.btnBaglantıKapat.Location = new System.Drawing.Point(138, 230);
+            this.btnBaglantıKapat.Location = new System.Drawing.Point(138, 185);
             this.btnBaglantıKapat.Name = "btnBaglantıKapat";
             this.btnBaglantıKapat.Size = new System.Drawing.Size(187, 36);
             this.btnBaglantıKapat.TabIndex = 68;
             this.btnBaglantıKapat.Text = "Disconnect";
             this.btnBaglantıKapat.UseVisualStyleBackColor = false;
             this.btnBaglantıKapat.Click += new System.EventHandler(this.btnBaglantıKapat_Click_1);
-            // 
-            // txtSave
-            // 
-            this.txtSave.Location = new System.Drawing.Point(15, 256);
-            this.txtSave.Name = "txtSave";
-            this.txtSave.Size = new System.Drawing.Size(75, 23);
-            this.txtSave.TabIndex = 69;
-            this.txtSave.Text = "Save";
-            this.txtSave.UseVisualStyleBackColor = true;
-            this.txtSave.Click += new System.EventHandler(this.txtSave_Click_1);
             // 
             // label2
             // 
@@ -172,6 +163,7 @@ namespace ModbusProject
             this.txtSlaveId.Size = new System.Drawing.Size(121, 22);
             this.txtSlaveId.TabIndex = 74;
             this.txtSlaveId.Text = "1";
+            this.txtSlaveId.TextChanged += new System.EventHandler(this.txtSlaveId_TextChanged);
             // 
             // label26
             // 
@@ -259,10 +251,11 @@ namespace ModbusProject
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
-            this.openToolStripMenuItem,
+            this.openfolder,
             this.closeToolStripMenuItem,
             this.saveToolStripMenuItem,
-            this.saveASToolStripMenuItem});
+            this.saveASToolStripMenuItem,
+            this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
             this.fileToolStripMenuItem.Text = "File";
@@ -270,32 +263,53 @@ namespace ModbusProject
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+            this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.newToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
-            // openToolStripMenuItem
+            // openfolder
             // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.openToolStripMenuItem.Text = "Open";
+            this.openfolder.BackColor = System.Drawing.Color.Yellow;
+            this.openfolder.Name = "openfolder";
+            this.openfolder.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openfolder.Size = new System.Drawing.Size(224, 26);
+            this.openfolder.Text = "Open";
+            this.openfolder.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             this.closeToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.closeToolStripMenuItem.Text = "Close";
+            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
+            this.saveToolStripMenuItem.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveASToolStripMenuItem
             // 
             this.saveASToolStripMenuItem.Name = "saveASToolStripMenuItem";
             this.saveASToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.saveASToolStripMenuItem.Text = "SaveAS";
+            this.saveASToolStripMenuItem.Text = "Save As";
+            this.saveASToolStripMenuItem.Click += new System.EventHandler(this.saveASToolStripMenuItem_Click);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.BackColor = System.Drawing.Color.DarkRed;
+            this.exitToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem.Image")));
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D4)));
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // txtForms
             // 
@@ -314,7 +328,6 @@ namespace ModbusProject
             this.Controls.Add(this.lblBaglantıDurumu);
             this.Controls.Add(this.txtMesaj);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.txtSave);
             this.Controls.Add(this.btnBaglantıKapat);
             this.Controls.Add(this.btnBaglantıAc);
             this.Controls.Add(this.txtPort);
@@ -344,7 +357,6 @@ namespace ModbusProject
         private System.Windows.Forms.TextBox txtPort;
         private System.Windows.Forms.Button btnBaglantıAc;
         private System.Windows.Forms.Button btnBaglantıKapat;
-        private System.Windows.Forms.Button txtSave;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label txtMesaj;
         private System.Windows.Forms.Label lblBaglantıDurumu;
@@ -362,10 +374,11 @@ namespace ModbusProject
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openfolder;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveASToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
     }
 }
 
