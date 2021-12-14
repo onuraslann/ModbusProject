@@ -22,6 +22,7 @@ namespace ModbusProject
 
         private TextBox[] register;
         private TextBox[] register2;
+        private TextBox[] register3;
         public txtForms()
         {
             InitializeComponent();
@@ -37,49 +38,36 @@ namespace ModbusProject
 
             try
             {
-
                 txtSlaveId.ReadOnly = true;
                 txtAdress.ReadOnly = true;
                 txtPort.ReadOnly = true;
                 txtServerIPAdress.ReadOnly = true;
                 txtquantity.ReadOnly = true;
-
-
-
                 modbusClient = new ModbusClient(txtServerIPAdress.Text, Convert.ToInt16(txtPort.Text));
-
-
                 modbusClient.Connect();
-
                 register = new TextBox[Convert.ToInt16(txtquantity.Text)];
-
                 register2 = new TextBox[Convert.ToInt16(txtquantity.Text)];
-       
-
+                register3 = new TextBox[Convert.ToInt16(txtquantity.Text)];
 
                 for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
                 {
+             
                     register2[i] = new TextBox();
-
-
                     register2[i].Location = new Point(0, i * 20);
-                    //register2[i].Location = new Point(450, i * 20);
-                    register2[i].Size = new Size(50, 22);
-                    //this.Controls.Add(register2[i]);
+                    register2[i].Size = new Size(40, 22);
                     panel1.Controls.Add(register2[i]);
-                    //register3[i] = new TextBox();
 
-                    //register3[i].Location = new Point(500, i * 20);
-                    //register3[i].Size = new Size(50, 22);
-                    //this.Controls.Add(register3[i]);
+                    register3[i] = new TextBox();
+                    register3[i].Location = new Point(40, (i) * 20);
+                    register3[i].Size = new Size(80, 45);
+                    panel1.Controls.Add(register3[i]);
+                   
 
                     register[i] = new TextBox();
-                    //register[i].Location = new Point(500, (i) * 20);
-                    register[i].Location = new Point(0, (i) * 20);
-                    register[i].Size = new Size(150, 45);
-
-                    //this.Controls.Add(register[i]);
+                    register[i].Location = new Point(120, (i) * 20);
+                    register[i].Size = new Size(100, 45);
                     panel1.Controls.Add(register[i]);
+      
 
                 }
                 lblBaglantıDurumu.Text = "Connection Open";
@@ -110,26 +98,20 @@ namespace ModbusProject
                     {
                         register2[i].Text = (Convert.ToInt16(txtAdress.Text) + (i)).ToString();
 
-
                         register[i].Text = readHoldingRegisters[i].ToString();
-
                     }
                 }
-
                 else if (cboState.Text == "Read Coils(0x)")
                 {
-
                     modbusClient.UnitIdentifier = (byte)Convert.ToInt16(txtSlaveId.Text);
                     bool[] readCoils = modbusClient.ReadCoils(startingAddress: Convert.ToInt32(txtAdress.Text), quantity: Convert.ToInt32(txtquantity.Text));
 
                     for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
                     {
-
                         register2[i].Text = (Convert.ToInt16(txtAdress.Text) + (i)).ToString();
                         register[i].Text = readCoils[i].ToString();
 
                     }
-
                 }
 
                 else if (cboState.Text == "04 Input Register(3x)")
@@ -137,18 +119,15 @@ namespace ModbusProject
                     modbusClient.UnitIdentifier = (byte)Convert.ToInt16(txtSlaveId.Text);
                     int[] inputRegister = modbusClient.ReadInputRegisters(startingAddress: Convert.ToInt32(txtAdress.Text), quantity: Convert.ToInt32(txtquantity));
 
-
                     for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
                     {
                         register2[i].Text = (Convert.ToInt16(txtAdress.Text) + (i)).ToString();
 
                         register[i].Text = inputRegister[i].ToString();
 
-
                     }
 
                 }
-
                 else if (cboState.Text == "02 Input Status(1x)")
                 {
 
@@ -156,36 +135,27 @@ namespace ModbusProject
 
                     bool[] inputStatus = modbusClient.ReadDiscreteInputs(startingAddress: Convert.ToInt32(txtAdress.Text), quantity: Convert.ToInt32(txtquantity.Text));
 
-
-
                     for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
                     {
                         register2[i].Text = (Convert.ToInt16(txtAdress.Text) + (i)).ToString();
                         register[i].Text = inputStatus[i].ToString();
-
-
                     }
 
                 }
 
             }
 
-
             catch (Exception ex)
             {
                 txtMesaj.Text = ex.Message;
 
             }
-
-
             tmrModbusTcpIP.Enabled = true;
         }
-       
         private void btnBaglantıKapat_Click_1(object sender, EventArgs e)
         {
             try
             {
-
                 modbusClient.Disconnect();
                 lblBaglantıDurumu.Text = "Disconnection ";
                 tmrModbusTcpIP.Enabled = false;
@@ -197,10 +167,8 @@ namespace ModbusProject
                 for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
                 {
                     this.Controls.Remove(register2[i]);
+                    this.Controls.Remove(register3[i]);
                     this.Controls.Remove(register[i]);
-
-
-
                 }
             }
             catch (Exception ex)
@@ -208,7 +176,6 @@ namespace ModbusProject
                 lblBaglantıDurumu.Text = ex.Message;
             }
         }
-    
         private void txtAdress_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (char.IsDigit(e.KeyChar) == false)
@@ -216,9 +183,7 @@ namespace ModbusProject
                 e.Handled = true;
                 MessageBox.Show("Buraya Sadece Sayı giriniz");
             }
-
         }
-
         private void txtSlaveId_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (char.IsDigit(e.KeyChar) == false)
@@ -226,36 +191,31 @@ namespace ModbusProject
                 e.Handled = true;
                 MessageBox.Show("Buraya Sadece Sayı giriniz");
             }
-
         }
-
         private void txtSave_Click_1(object sender, EventArgs e)
         {
+
             try
             {
+
                 saveFileDialog1.FileName = "*";
                 saveFileDialog1.Filter = "YazıDosyaları(*json)|*.json)";
                 saveFileDialog1.DefaultExt = "json";
                 saveFileDialog1.ShowDialog();
                 StreamWriter writer = new StreamWriter(saveFileDialog1.FileName);
-                writer.WriteLine("Json:");
-                writer.WriteLine("IP : " + JsonConvert.SerializeObject((txtServerIPAdress.Text)));
-                writer.WriteLine("Port : " + JsonConvert.SerializeObject((txtPort.Text)));
-                writer.WriteLine("SlaveId : " + JsonConvert.SerializeObject((txtSlaveId.Text)));
-                writer.WriteLine("Function : " + JsonConvert.SerializeObject((cboState.Text)));
-                writer.WriteLine("Adress : " + JsonConvert.SerializeObject((txtAdress.Text)));
-                writer.WriteLine("Quantity : " + JsonConvert.SerializeObject((txtquantity.Text)));
-               
-                //writer.WriteLine("Port: " + txtPort.Text);
-                //writer.WriteLine("SlaveId: " + txtSlaveId.Text);
-                //writer.WriteLine("Function: " + cboState.Text);
-                //writer.WriteLine("Adress: " + txtAdress.Text);
-                //writer.WriteLine("Quantity: " + txtquantity.Text);
+                ModbusSetup setup = new ModbusSetup();
+                setup.ServerIP = txtServerIPAdress.Text;
+                setup.Port = Convert.ToInt32(txtPort.Text);
+                setup.SlaveId= Convert.ToInt32(txtSlaveId.Text);
+                setup.Function = cboState.Text;
+                setup.Address = Convert.ToInt32(txtAdress.Text);
+                setup.Quantity = Convert.ToInt32(txtquantity.Text);
+                writer.WriteLine(JsonConvert.SerializeObject(setup));
+
                 writer.Close();
             }
             catch (Exception)
             {
-
                 MessageBox.Show("Kaydetme işlemi başarısız");
             }
 
