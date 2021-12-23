@@ -48,7 +48,6 @@ namespace ModbusProject
                 register = new TextBox[Convert.ToInt16(txtquantity.Text)];
                 register2 = new TextBox[Convert.ToInt16(txtquantity.Text)];
                 register3 = new TextBox[Convert.ToInt16(txtquantity.Text)];
-
                 for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
                 {
                     register2[i] = new TextBox();
@@ -61,7 +60,6 @@ namespace ModbusProject
                     register3[i].Size = new Size(80, 45);
                     panel1.Controls.Add(register3[i]);
                    
-
                     register[i] = new TextBox();
                     register[i].Location = new Point(120, (i) * 20);
                     register[i].Size = new Size(100, 45);
@@ -78,14 +76,12 @@ namespace ModbusProject
 
                 lblBaglantıDurumu.Text = ex.Message;
             }
-
         }
         private void tmrModbusTcpIP_Tick_1(object sender, EventArgs e)
         {
             tmrModbusTcpIP.Enabled = false;
             try
             {
-
                 if (cboState.Text == "03 Read Holding Register(4x)")
                 {
 
@@ -116,7 +112,7 @@ namespace ModbusProject
                 else if (cboState.Text == "04 Input Register(3x)")
                 {
                     modbusClient.UnitIdentifier = (byte)Convert.ToInt16(txtSlaveId.Text);
-                    int[] inputRegister = modbusClient.ReadInputRegisters(startingAddress: Convert.ToInt32(txtAdress.Text), quantity: Convert.ToInt32(txtquantity));
+                    int[] inputRegister = modbusClient.ReadInputRegisters(startingAddress: Convert.ToInt32(txtAdress.Text), quantity: Convert.ToInt32(txtquantity.Text));
 
                     for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
                     {
@@ -139,7 +135,6 @@ namespace ModbusProject
                         register2[i].Text = (Convert.ToInt16(txtAdress.Text) + (i)).ToString();
                         register[i].Text = inputStatus[i].ToString();
                     }
-
                 }
 
             }
@@ -175,7 +170,6 @@ namespace ModbusProject
             txtForms2 to = new txtForms2();
             to.Show();
         }
-
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -185,14 +179,31 @@ namespace ModbusProject
                 saveFileDialog1.DefaultExt = "json";
                 saveFileDialog1.ShowDialog();
                 StreamWriter writer = new StreamWriter(saveFileDialog1.FileName);
-                ModbusSetup setup = new ModbusSetup();
-                setup.ServerIP = txtServerIPAdress.Text;
-                setup.Port = Convert.ToInt32(txtPort.Text);
-                setup.SlaveId = Convert.ToInt32(txtSlaveId.Text);
-                setup.Function = cboState.Text;
-                setup.Address = Convert.ToInt32(txtAdress.Text);
-                setup.Quantity = Convert.ToInt32(txtquantity.Text);
+            
+                ModbusSetup setup = new ModbusSetup()
+                {
+                    ServerIP = txtServerIPAdress.Text,
+                    Port = Convert.ToInt32(txtPort.Text),
+                    SlaveId = Convert.ToInt32(txtSlaveId.Text),
+                    Function = cboState.Text,
+                    Address = Convert.ToInt32(txtAdress.Text),
+                    Quantity = Convert.ToInt32(txtquantity.Text)
+                };              
+      
+                for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
+                {
+                    ModbusRegister temp = new ModbusRegister();
+                    temp.RegisterNr = Convert.ToInt32(register2[i].Text);
+                    temp.Description = register3[i].Text;
+                    temp.RegisterValue = register[i].Text;
+                    setup.Registers[i] = temp;
+                }
                 writer.WriteLine(JsonConvert.SerializeObject(setup));
+
+                /*for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
+                {
+                    writer.WriteLine(i + JsonConvert.SerializeObject(register3[i].Text));
+                }*/
 
                 writer.Close();
             }
@@ -205,9 +216,7 @@ namespace ModbusProject
         }
         private void txtSlaveId_TextChanged(object sender, EventArgs e)
         {
-
         }
-
         private void saveASToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -224,9 +233,14 @@ namespace ModbusProject
                 setup.Function = cboState.Text;
                 setup.Address = Convert.ToInt32(txtAdress.Text);
                 setup.Quantity = Convert.ToInt32(txtquantity.Text);
-                writer.WriteLine(JsonConvert.SerializeObject(setup));
 
-                writer.Close();
+                writer.WriteLine(JsonConvert.SerializeObject(setup));
+                for (int i = 0; i < Convert.ToInt32(txtquantity.Text); i++)
+                {
+                    writer.Write(JsonConvert.SerializeObject(i +   " : "  +register3[i].Text));      
+
+                 }
+                    writer.Close();
             }
             catch (Exception)
             {

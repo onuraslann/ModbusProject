@@ -19,5 +19,18 @@ namespace ModbusProject
         public int Address { get; set; }
 
         public int Quantity { get; set; }
+
+        public ModbusRegister[] Registers = new ModbusRegister[125];
+    }
+
+    public class ModbusRegister
+    {
+
+        
+        public int RegisterNr { get; set; }
+
+        public string Description { get; set; }
+
+        public string RegisterValue { get; set; }
     }
 }
